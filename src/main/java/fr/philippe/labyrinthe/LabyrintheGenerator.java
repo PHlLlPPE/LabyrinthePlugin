@@ -4,6 +4,9 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import java.util.*;
+import org.bukkit.block.Chest;
+import org.bukkit.inventory.ItemStack;
+
 
 public class LabyrintheGenerator {
 
@@ -26,6 +29,8 @@ public class LabyrintheGenerator {
         genererMurs();          // Étape 1 : Remplir la zone de murs (stone)
         genererDepuis(0, 0);    // Étape 2 : Creuser les chemins dans les murs
         creerEntreeEtSortie();  // Ajouter entrée et sortie
+        placerCoffresAleatoires(5); // place 5 coffres dans des emplacements valides
+
     }
 
     private void genererMurs() {
@@ -98,4 +103,50 @@ public class LabyrintheGenerator {
             world.getBlockAt(x, y + h, z).setType(Material.AIR);
         }
     }
+
+    private void placerCoffre(int x, int y, int z) {
+    Block block = world.getBlockAt(x, y, z);
+    block.setType(Material.CHEST);
+
+    if (block.getState() instanceof Chest chest) {
+        chest.getInventory().clear();
+
+        // Loots aléatoires possibles
+        List<Material> loots = Arrays.asList(
+            Material.GOLD_INGOT,
+            Material.IRON_INGOT,
+            Material.DIAMOND,
+            Material.ENCHANTED_GOLDEN_APPLE,
+            Material.BREAD,
+            Material.EXPERIENCE_BOTTLE,
+            Material.ARROW
+        );
+
+        Random random = new Random();
+        int nombreItems = 2 + random.nextInt(3); // 2 à 4 items
+
+        for (int i = 0; i < nombreItems; i++) {
+            Material item = loots.get(random.nextInt(loots.size()));
+            chest.getInventory().addItem(new ItemStack(item, 1 + random.nextInt(3))); // 1 à 3 quantités
+        }
+    }
+}
+
+private void placerCoffresAleatoires(int nombre) {
+    int y = origin.getBlockY();
+    Random rand = new Random();
+
+    for (int i = 0; i < nombre; i++) {
+        int cellX = rand.nextInt(largeur);
+        int cellZ = rand.nextInt(hauteur);
+
+        // Coordonnées en blocs
+        int x = origin.getBlockX() + cellX * 2 + 1;
+        int z = origin.getBlockZ() + cellZ * 2 + 1;
+
+        placerCoffre(x, y, z);
+    }
+}
+
+
 }
