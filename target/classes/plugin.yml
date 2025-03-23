@@ -1,0 +1,9 @@
+name: "LabyrinthePlugin"
+version: "1.0"
+api: "1.21"
+main: fr.philippe.labyrinthe.Main
+api-version: '1.21'
+commands:
+  labyrinthe:
+    description: Génère un labyrinthe automatiquement
+    usage: /<command>
